@@ -1,0 +1,25 @@
+#%%
+import warnings
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import time
+import numpy as np
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from imblearn import under_sampling, over_sampling
+from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import r2_score
+warnings.filterwarnings("ignore") 
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+pd.options.display.float_format = '{:.2f}'.format
+# %%
