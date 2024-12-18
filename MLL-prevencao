@@ -19,7 +19,69 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score
 warnings.filterwarnings("ignore") 
+
+# melhor analise das colunas permetindo uma barra de rolagem
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.options.display.float_format = '{:.2f}'.format
+# %%
+df=pd.read_csv('data/dados_coletados10k.csv')
+# %%
+df.shape
+# %%
+df.head()
+# %%
+df.isnull().sum()
+# %%
+#verbose verifica as colunas
+
+df.info(verbose=True)
+# %%
+valores_unicos = []
+for i in df.columns[0:24].tolist():
+    print(i, ":", len(df[i].astype(str).value_counts()) )
+    valores_unicos.append(len(df[i].astype(str).value_counts()))
+
+# %%
+df.describe()
+# %%
+# analisando renda 
+print('Maior renda:', df['Valor_Renda'].max())
+print('Menor renda:', df['Valor_Renda'].min())
+# %%
+# analisando Quantidade de dias em atraso
+print('Maior quantidade de dias em atraso:', df['QT_Parcelas_Atraso'].max())
+print('Menor quantidade de dias em atraso:', df['QT_Parcelas_Atraso'].min())
+# %%
+# analisando Prazo restante
+print('Maior quantidade de dias para o prazo restante:', df['Prazo_Restante'].max())
+print('Menor quantidade de dias para o prazo restante:', df['Prazo_Restante'].min())
+# %%
+# quantidades de dias em atraso 
+df.groupby(['QT_Dias_Atraso']).size()
+# %%
+# prazo de emprestimo
+df.groupby(['Prazo_Emprestimo']).size()
+# %%
+# prazo restante 
+df.groupby(['Prazo_Restante']).size()
+
+# %%
+# Idade
+df.groupby(['Idade']).size()
+# %%
+# Estado civil
+df.groupby(['Estado_Civil']).size()
+# %%
+# Escolaridade
+df.groupby(['Escolaridade']).size()
+# %%
+# Patrimonio 
+df.groupby(['Possui_Patrimonio']).size()
+# %%
+# Valor do patrimonio 
+df.groupby(['VL_Patrimonio']).size()
+# %%
+# Variavel TARGET 
+df.groupby(['Possivel_Fraude']).size()
 # %%
