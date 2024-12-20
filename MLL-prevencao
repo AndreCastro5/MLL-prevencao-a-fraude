@@ -20,7 +20,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score
 warnings.filterwarnings("ignore") 
 
-# melhor analise das colunas permetindo uma barra de rolagem
+# Melhor analise das colunas permetindo uma barra de rolagem
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.options.display.float_format = '{:.2f}'.format
@@ -33,7 +33,7 @@ df.head()
 # %%
 df.isnull().sum()
 # %%
-#verbose verifica as colunas
+#Verbose verifica as colunas
 
 df.info(verbose=True)
 # %%
@@ -45,25 +45,32 @@ for i in df.columns[0:24].tolist():
 # %%
 df.describe()
 # %%
-# analisando renda 
+# Analisando renda 
 print('Maior renda:', df['Valor_Renda'].max())
 print('Menor renda:', df['Valor_Renda'].min())
 # %%
-# analisando Quantidade de dias em atraso
+# Analisando Quantidade de dias em atraso
 print('Maior quantidade de dias em atraso:', df['QT_Parcelas_Atraso'].max())
 print('Menor quantidade de dias em atraso:', df['QT_Parcelas_Atraso'].min())
 # %%
-# analisando Prazo restante
+# Analisando Prazo restante
 print('Maior quantidade de dias para o prazo restante:', df['Prazo_Restante'].max())
 print('Menor quantidade de dias para o prazo restante:', df['Prazo_Restante'].min())
+#%%
+# Avaliando o maior e menor valor da variavel QT_Dias_Atraso
+print('Maior quantidade de dias atraso: ', df['QT_Dias_Atraso'].max())
+print('Menor quantidade de dias atraso: ', df['QT_Dias_Atraso'].min())
+
+
 # %%
-# quantidades de dias em atraso 
+# Quantidades de dias em atraso 
 df.groupby(['QT_Dias_Atraso']).size()
+
 # %%
-# prazo de emprestimo
+# Prazo de emprestimo
 df.groupby(['Prazo_Emprestimo']).size()
 # %%
-# prazo restante 
+# Prazo restante 
 df.groupby(['Prazo_Restante']).size()
 
 # %%
@@ -84,4 +91,83 @@ df.groupby(['VL_Patrimonio']).size()
 # %%
 # Variavel TARGET 
 df.groupby(['Possivel_Fraude']).size()
+
+
+
+
+# %%
+# Ajustando estado civil fundindo atributos para a melhor visualizção
+df['Estado_Civil'] = df['Estado_Civil'].replace(['NENHUM'], 'OUTRO')
+df['Estado_Civil'] = df['Estado_Civil'].replace(['UNIÃO ESTAVEL'], 'CASADOS (A)')
+df.groupby(['Estado_Civil']).size()
+# %%
+# Criando faixa etaria 
+bins = [0, 21, 30, 40, 50, 60, 100]
+labels = ['Até 21 Anos', 'De 22 até 30 Anos', 'De 31 até 40 Anos', 'De 41 até 50 Anos', 'De 51 até 60', 'Acima de 60 Anos']
+df['Faixa_Etaria'] = pd.cut(df['Idade'], bins=bins, labels=labels)
+df.groupby(['Faixa_Etaria']).size()
+# %%
+df.head()
+# %%
+# Criando faiza etária para Salários 
+bins = [-100, 1000, 2000, 3000, 5000, 10000, 20000, 30000, 9000000000]
+labels = ['Até 1k', 'De 1k até 2k', 'De 2k até 3k', 'De 3k até 5k', 'De 5k até 10k', 'De 10k até 20k','De 20k até 30k', 'Acima de 50k']
+df['Faixa_Salarial'] = pd.cut(df['Valor_Renda'], bins=bins, labels=labels)
+df.groupby(['Faixa_Salarial']).size()
+
+#%%
+# Tratando valores nulos
+df['QT_Dias_Atraso'] = df['QT_Dias_Atraso'].fillna((df['QT_Dias_Atraso'].median()))
+
+#%%
+# Criando faixa de dias em atraso 
+bins = [-100, 30, 60, 90, 180, 240, 360, 500]
+labels = ['Até 30 dias', 'De 31 até 60', 'De 61 até 90', 'De 91 até 180', 'De 181 até 240','De 241 até 360', 'Acima de 360']
+df['Faixa_Dias_Atraso'] = pd.cut(df['QT_Dias_Atraso'], bins=bins, labels=labels)
+df.groupby(['Faixa_Dias_Atraso']).size()
+
+# %%
+# Criando faixa de prazo de emprestimo 
+bins = [0, 60, 120, 200, 720]
+labels = ['Até 60 Meses', 'De 61 até 120 Meses', 'De 121 até 200 Meses', 'Acima de 200 Meses']
+df['Faixa_Prazo_Emprestimo'] = pd.cut(df['Prazo_Emprestimo'], bins=bins, labels=labels)
+pd.value_counts(df.Faixa_Prazo_Emprestimo)
+
+# %%
+# Criando faixa de prazo restante do emprestimo 
+bins = [-1, 60, 120, 200, 500]
+labels = ['Até 60 Meses', 'De 61 até 120 Meses', 'De 121 até 200 Meses', 'Acima de 200 Meses']
+df['Faixa_Prazo_Restante'] = pd.cut(df['Prazo_Restante'], bins=bins, labels=labels)
+pd.value_counts(df.Faixa_Prazo_Restante)
+
+
+
+
+
+# %%
+# valores mostrado em gráficos 
+#GENERO
+df.Sexo.value_counts().plot(kind='bar', title='Sexo',color = ['#1F77B4', '#FF7F0E'])
+# %%
+#ESTADO
+df.UF_Cliente.value_counts().plot(kind='bar', title='UF Cliente',color = ['#1F77B4', '#FF7F0E'])
+# %%
+#PRAZO DE EMPRESTIMO
+df.Faixa_Prazo_Emprestimo.value_counts().plot(kind='bar', title='Prazo Emprestimo',color = ['#1F77B4', '#FF7F0E'])
+# %%
+#PRAZO RESTANTE
+df.Faixa_Prazo_Restante.value_counts().plot(kind='bar', title='Prazo Restante',color = ['#1F77B4', '#FF7F0E'])
+# %%
+#ESTADO CIVIL
+df.Estado_Civil.value_counts().plot(kind='bar', title='Estado Civil',color = ['#1F77B4', '#FF7F0E'])
+# %%
+#ESCOARIDADE
+df.Escolaridade.value_counts().plot(kind='bar', title='Escolaridade',color = ['#1F77B4', '#FF7F0E'])
+# %%
+#DIAS DE ATRASO
+df.Faixa_Dias_Atraso.value_counts().plot(kind='bar', title='Faixa Dias Atraso',color = ['#1F77B4', '#FF7F0E'])
+# %%
+#FAIXA SALARIAL
+df.Faixa_Salarial.value_counts().plot(kind='bar', title='Faixa Salarial',color = ['#1F77B4', '#FF7F0E'])
+
 # %%
